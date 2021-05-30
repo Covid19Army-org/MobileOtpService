@@ -13,4 +13,5 @@ public interface MobileVerificationQueueRepository extends PagingAndSortingRepos
 	
 	Page<MobileVerificationQueue> findByDateCreatedGreaterThanEqual(Date date, Pageable pageable);
 	Optional<MobileVerificationQueue> findByMobilenumberAndOtp(String mobilenumber, int otp);
+	Page<MobileVerificationQueue> findByIsprocessedFalse(Pageable pageable);
 }

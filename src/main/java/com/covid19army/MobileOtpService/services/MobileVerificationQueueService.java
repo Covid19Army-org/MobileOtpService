@@ -35,8 +35,8 @@ public class MobileVerificationQueueService {
 		return newModel.getItemid();
 	}
 	
-	public PagedResponseDto<MobileVerificationResponseDto> getNotProcessedItems(Date date, Pageable pageable){
-		Page<MobileVerificationQueue> queueItemsPage = _mobileVerificationQueueRepository.findByDateCreatedGreaterThanEqual(date, pageable);
+	public PagedResponseDto<MobileVerificationResponseDto> getNotProcessedItems( Pageable pageable){
+		Page<MobileVerificationQueue> queueItemsPage = _mobileVerificationQueueRepository.findByIsprocessedFalse( pageable);
 		List<MobileVerificationResponseDto> dtoList = queueItemsPage.getContent().stream()
 				.map(q -> _mapper.map(q, MobileVerificationResponseDto.class))
 				.collect(Collectors.toList());
