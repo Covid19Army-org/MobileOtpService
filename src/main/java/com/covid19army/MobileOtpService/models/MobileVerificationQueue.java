@@ -2,6 +2,9 @@ package com.covid19army.MobileOtpService.models;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.covid19army.MobileOtpService.modelListeners.MobileVerificationQueueModelListener;
+
 import java.util.Date;
 
 
@@ -10,7 +13,7 @@ import java.util.Date;
  * The persistent class for the mobileverificationqueue database table.
  * 
  */
-@EntityListeners(MobileVerificationQueue.class)
+@EntityListeners(MobileVerificationQueueModelListener.class)
 @Entity
 @Table(name="mobileverificationqueue")
 @NamedQuery(name="MobileVerificationQueue.findAll", query="SELECT m FROM MobileVerificationQueue m")

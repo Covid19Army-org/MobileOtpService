@@ -29,11 +29,24 @@ public class MobileVerificationQueueService {
 	
 	public long createQueueItem(MobileVerificationQueueDto mobileVerificationQueueDto) {
 		
-		MobileVerificationQueue newModel = _mapper.map(mobileVerificationQueueDto, MobileVerificationQueue.class);
-		newModel.setOtp(OTP());
-		_mobileVerificationQueueRepository.save(newModel);
+		Optional<MobileVerificationQueue> existingModel =
+				_mobileVerificationQueueRepository.findByEntityidAndEntitytypeAndMobilenumberAndIsprocessedFalse(
+						mobileVerificationQueueDto.getEntityid(),mobileVerificationQueueDto.getEntitytype()
+						,mobileVerificationQueueDto.getMobilenumber());
+		MobileVerificationQueue newModel = null;
+		Date currDate = new Date();
+		if(existingModel.isEmpty() || 
+				(existingModel.isPresent() && currDate.compareTo(existingModel.get().getDateExpiry()) > 0)) {
+			newModel = _mapper.map(mobileVerificationQueueDto, MobileVerificationQueue.class);
+			newModel.setOtp(OTP());
+			_mobileVerificationQueueRepository.save(newModel);
+		}
+		else {
+			newModel = existingModel.get();
+		}
+		
 		return newModel.getItemid();
-	}
+	}	
 	
 	public PagedResponseDto<MobileVerificationResponseDto> getNotProcessedItems( Pageable pageable){
 		Page<MobileVerificationQueue> queueItemsPage = _mobileVerificationQueueRepository.findByIsprocessedFalse( pageable);
