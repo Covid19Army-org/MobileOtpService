@@ -21,7 +21,7 @@ import com.covid19army.core.dtos.OtpVerificationRequestDto;
 import com.covid19army.core.dtos.PagedResponseDto;
 
 @RestController
-@RequestMapping("/motp")
+@RequestMapping("motp")
 public class MobileOtpVerificationController {
 
 	@Autowired

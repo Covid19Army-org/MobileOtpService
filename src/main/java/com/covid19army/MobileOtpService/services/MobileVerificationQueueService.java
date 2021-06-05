@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import com.covid19army.MobileOtpService.repositories.MobileVerificationQueueRepo
 import com.covid19army.core.dtos.MobileVerificationQueueDto;
 import com.covid19army.core.dtos.OtpVerificationRequestDto;
 import com.covid19army.core.dtos.PagedResponseDto;
+import com.covid19army.core.mex.rabbitmq.RabbitMQSender;
 
 @Service
 public class MobileVerificationQueueService {
@@ -26,6 +28,10 @@ public class MobileVerificationQueueService {
 	
 	@Autowired
 	ModelMapper _mapper;
+	
+	@Autowired
+	@Qualifier("sendOtpExchangeSender")
+	RabbitMQSender _sendOtpExchangeSender;
 	
 	public long createQueueItem(MobileVerificationQueueDto mobileVerificationQueueDto) {
 		
@@ -37,6 +43,8 @@ public class MobileVerificationQueueService {
 		Date currDate = new Date();
 		if(existingModel.isEmpty() || 
 				(existingModel.isPresent() && currDate.compareTo(existingModel.get().getDateExpiry()) > 0)) {
+			if(existingModel.isPresent())
+				_mobileVerificationQueueRepository.delete(existingModel.get());
 			newModel = _mapper.map(mobileVerificationQueueDto, MobileVerificationQueue.class);
 			newModel.setOtp(OTP());
 			_mobileVerificationQueueRepository.save(newModel);
@@ -45,6 +53,10 @@ public class MobileVerificationQueueService {
 			newModel = existingModel.get();
 		}
 		
+		MobileVerificationResponseDto sendOtpDto = new MobileVerificationResponseDto();
+		sendOtpDto.setMobilenumber(newModel.getMobilenumber());
+		sendOtpDto.setOtp(newModel.getOtp());
+		_sendOtpExchangeSender.<MobileVerificationResponseDto>send(sendOtpDto);
 		return newModel.getItemid();
 	}	
 	
