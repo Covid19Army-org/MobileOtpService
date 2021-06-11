@@ -102,7 +102,7 @@
 			    </configuration>
 			</plugin>
 		</plugins>
-		<finalName>otpservice</finalName>
+		<finalName>mobileotpservice</finalName>
 	</build>
 
 </project>
