@@ -27,6 +27,11 @@ public class MobileOtpVerificationController {
 	@Autowired
 	MobileVerificationQueueService _mobileVerificationQueueService;
 	
+	@GetMapping("/health")
+	public String health() {
+		return "am running!";
+	}
+	
 	@PostMapping("/create")
 	public long createOtp(@RequestBody MobileVerificationQueueDto mobileVerificationQueueDto) {
 		return _mobileVerificationQueueService.createQueueItem(mobileVerificationQueueDto);
