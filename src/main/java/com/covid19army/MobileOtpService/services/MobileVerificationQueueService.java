@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.covid19army.MobileOtpService.dtos.MobileVerificationResponseDto;
+import com.covid19army.core.dtos.MobileVerificationResponseDto;
 import com.covid19army.MobileOtpService.models.MobileVerificationQueue;
 import com.covid19army.MobileOtpService.repositories.MobileVerificationQueueRepository;
 import com.covid19army.core.dtos.MobileVerificationQueueDto;
@@ -33,7 +33,7 @@ public class MobileVerificationQueueService {
 	@Qualifier("sendOtpExchangeSender")
 	RabbitMQSender _sendOtpExchangeSender;
 	
-	public long createQueueItem(MobileVerificationQueueDto mobileVerificationQueueDto) {
+	public MobileVerificationResponseDto createQueueItem(MobileVerificationQueueDto mobileVerificationQueueDto) {
 		
 		Optional<MobileVerificationQueue> existingModel =
 				_mobileVerificationQueueRepository.findByEntityidAndEntitytypeAndMobilenumberAndIsprocessedFalse(
@@ -57,7 +57,7 @@ public class MobileVerificationQueueService {
 		sendOtpDto.setMobilenumber(newModel.getMobilenumber());
 		sendOtpDto.setOtp(newModel.getOtp());
 		_sendOtpExchangeSender.<MobileVerificationResponseDto>send(sendOtpDto);
-		return newModel.getItemid();
+		return sendOtpDto;
 	}	
 	
 	public PagedResponseDto<MobileVerificationResponseDto> getNotProcessedItems( Pageable pageable){

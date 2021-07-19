@@ -16,7 +16,7 @@ public class RabbitMQConsumer {
 	@RabbitListener(queues = "${covid19army.rabbitmq.mobileverificationrequestqueue}")
 	public void recievedMessage(MobileVerificationQueueDto message) {		
 		System.out.println("Recieved Message From RabbitMQ: " + message.getMobilenumber());
-		long otpId = _verificationQueueService.createQueueItem(message);		
-		System.out.println("Recieved Message From RabbitMQ: " + otpId);
+		var result = _verificationQueueService.createQueueItem(message);		
+		System.out.println("Recieved Message From RabbitMQ: " + result);
 	}
 }
